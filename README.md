@@ -35,6 +35,13 @@ This project implements an **animated login system**, using **Flutter**, **Dart*
   - **Forgot Password**
 - Responsive design with **Material Design**.  
 
+Rive is a tool for creating real-time, interactive animations that can be integrated into apps and websites. It allows designers and developers to create vector-based animations that respond to user input and can be controlled programmatically.
+
+A State Machine in Rive is a system that manages the different animation states and transitions based on inputs, allowing animations to react dynamically to user actions or app events.
+
+
+
+
 ---
 
 ## ⚙️ Environment Setup
@@ -56,7 +63,7 @@ This project implements an **animated login system**, using **Flutter**, **Dart*
 ---
 
 ## 📂 Project Structure
-```bash
+```text
 lib/
  ├── main.dart              # Application entry point
  └── screens/
@@ -67,6 +74,9 @@ assets/
 
 test/                       # Automated tests
 pubspec.yaml                # Dependencies and configuration
+
+```
+---
 
 ## 🖼️ UI Overview
 - **Login animation**: interactive bear linked to the text fields.
@@ -96,4 +106,8 @@ Created by **Ruksar Ahmed** on Rive Marketplace.
 Adapted and implemented for this project by *Programación de Aplicaciones Móviles*, Instituto Tecnológico de Mérida.
 
 ---
+
+- **Leonardo Yeret Ortiz Valle**
+**Docente:** Rodrigo Fidel Gaxiola Sosa
+**Grupo:** 8SB -- September 2025
 
