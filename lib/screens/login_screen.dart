@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
+import 'dart:async';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +12,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  Timer? _emailIdleTimer;
+
   //Cerebro de la lógica de animaciones
   StateMachineController? controller;
 
@@ -19,10 +22,61 @@ class _LoginScreenState extends State<LoginScreen> {
   SMIBool? isHandsUp; //Se tapa los ojos
   SMITrigger? trigSuccess; //Se emociona
   SMITrigger? trigFail; //Se pone triste
-
   SMINumber? numLook; //Sigue el texto del email
 
   bool _obscureText = true; // 👀 estado para mostrar/ocultar contraseña
+
+  // 👉 Aquí van tus FocusNodes
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _emailFocusNode.addListener(() {
+      if (_emailFocusNode.hasFocus) {
+        if (isChecking != null) isChecking!.change(true);
+        if (isHandsUp != null) isHandsUp!.change(false);
+      } else {
+        if (isChecking != null) isChecking!.change(false);
+      }
+    });
+
+    _passwordFocusNode.addListener(() {
+      if (_passwordFocusNode.hasFocus) {
+        if (isHandsUp != null) isHandsUp!.change(true);
+        if (isChecking != null) isChecking!.change(false);
+      } else {
+        if (isHandsUp != null) isHandsUp!.change(false);
+      }
+    });
+  }
+
+  @override
+    void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _emailIdleTimer?.cancel(); // 🔹 cancelar timer si queda activo
+    super.dispose();
+  }
+
+  void _validateLogin() {
+  final email = _emailController.text.trim();
+  final password = _passwordController.text;
+
+  if (trigSuccess == null || trigFail == null) return;
+
+  if (email == 'test@example.com' && password == '123456') {
+    trigSuccess!.fire(); // Login correcto
+  } else {
+    trigFail!.fire();    // Login incorrecto
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 //Espacio entre la animacion y el texto
                 const SizedBox(height: 10,),
                 TextField(
+                  controller: _emailController,
+                  focusNode: _emailFocusNode,
                   onChanged: (value) {
                     if (isHandsUp != null){
                       //No subir las manos al escribir email
@@ -80,6 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (numLook != null){
                       numLook!.value = (value.length / 3).clamp(0, 100).toDouble();
                     }
+                     _emailIdleTimer?.cancel(); // cancela el anterior
+                     _emailIdleTimer = Timer(const Duration(seconds: 2), () {
+                        // Después de 2 segundos de inactividad
+                        if (isChecking != null) isChecking!.change(false);
+                      });
                   },
                   //Teclado de tipo email
                   keyboardType: TextInputType.emailAddress,
@@ -95,6 +156,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10,),
                 TextField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
                   onChanged: (value) {
                     if (isChecking != null){
                       //No mover ojos al escribir email
@@ -147,7 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  onPressed: (){},
+                  onPressed: _validateLogin,
+                     // solo ejemplo},
                   child: const Text("Login",
                   style:TextStyle(color: Colors.white) 
                   ),
@@ -182,3 +246,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
